@@ -1081,9 +1081,9 @@ sub help {
 
 IP Calculator $version
 
-Enter your netmask(s) in CIDR notation (/25) or dotted decimals (255.255.255.0).
-Inverse netmask are recognized. If you mmit the netmask, ipcalc uses the default
-netmask for the class of your network.
+Enter your netmask(s) in CIDR notation (/25) or dotted decimals
+(255.255.255.0).  Inverse netmask are recognized. If you mmit the netmask,
+ipcalc uses the default netmask for the class of your network.
 
 Look at the space between the bits of the addresses: The bits before it are
 the network part of the address, the bits after it are the host part. You can
