@@ -132,7 +132,7 @@ EOF
    if (defined $ARGV[0]) {
       $address = argton($ARGV[0],0);
    }
-   if ($address == -1) {
+   if ($address == 0) {
       $error .= "INVALID ADDRESS: $ARGV[0]\n";
       $address = argton("192.168.1.1");
    }
@@ -311,13 +311,13 @@ sub getclass {
    while (($network & (1 << (32-$class))) == (1 << (32-$class)) ) {
       $class++;
       if ($class > 5) {
-         return "invalid";
+         return "invalid\n";
       }
    }
    if ($numeric) {
-      return $class[$class];
+      return $class[$class] . "\n";
    } else {
-      return chr($class+64);
+      return chr($class+64) . "\n";
    }
 }
 
