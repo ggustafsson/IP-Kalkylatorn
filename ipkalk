@@ -24,13 +24,13 @@ my $version = '0.41';
 
 my @class = qw (0 8 16 24 4 5 5);
 
-my $quads_color = "\033[1;36m";      # dotted quads, cyan
-my $norml_color = "\033[0m";         # normal, default
-my $binry_color = "\033[0m\033[33m"; # binary, yellow
-my $mask_color  = "\033[0m\033[31m"; # netmask, red
-my $class_color = "\033[0m\033[35m"; # classbits, magenta
-my $subnt_color = "\033[0m\033[32m"; # subnet bits, green
-my $error_color = "\033[0m\033[31m";
+my $quads_color  = "\033[1;36m";      # dotted quads, cyan
+my $normal_color = "\033[0m";         # normal, default
+my $binary_color = "\033[0m\033[33m"; # binary, yellow
+my $mask_color   = "\033[0m\033[31m"; # netmask, red
+my $class_color  = "\033[0m\033[35m"; # classbits, magenta
+my $subnet_color = "\033[0m\033[32m"; # subnet bits, green
+my $error_color  = "\033[0m\033[31m";
 
 my $sfont = "";
 my $break = "\n";
@@ -89,21 +89,21 @@ sub main
 
   if (! $opt_color) {
     $quads_color = '';
-    $norml_color = '';
-    $binry_color = '';
+    $normal_color = '';
+    $binary_color = '';
     $mask_color = '';
     $class_color = '';
-    $subnt_color = '';
+    $subnet_color = '';
     $sfont  = '';
   }
 
   if ($opt_html) {
     $quads_color = '<font color="#0000ff">' ;
-    $norml_color = '<font color="#000000">';
-    $binry_color = '<font color="#909090">';
+    $normal_color = '<font color="#000000">';
+    $binary_color = '<font color="#909090">';
     $mask_color = '<font color="#ff0000">';
     $class_color = '<font color="#009900">';
-    $subnt_color = '<font color="#663366">';
+    $subnet_color = '<font color="#663366">';
     $sfont  = '</font>';
     $break  = "<br>";
     #$private = "(<a href=\"http://www.ietf.org/rfc/rfc1918.txt\">Private Internet</a>)";
@@ -132,7 +132,7 @@ EOF
   if (defined $ARGV[0]) {
     $address = argton($ARGV[0],0);
   }
-  if ($address == 0) {
+  if ($address == -1) {
     $error  .= "INVALID ADDRESS: $ARGV[0]\n";
     $address = argton("192.168.1.1");
   }
@@ -287,7 +287,7 @@ sub subnets
   if ($hostn > -1) {
     print "\nSubnets:   $quads_color$subnet";
     html('</font>');
-    print "$norml_color$break";
+    print "$normal_color$break";
     html('</font>');
   }
   if ($hostn < 1 ) {
@@ -295,7 +295,7 @@ sub subnets
   }
   print "Hosts:     $quads_color" . ($hostn * $subnet);
   html('</font>');
-  print "$norml_color$break";
+  print "$normal_color$break";
   html('</font>');
 }
 
@@ -374,11 +374,11 @@ sub printnet {
 #    html("\n");
   html("<tr>\n");
   html('<td valign="top"><tt>'); #label
-  print set_color($norml_color);
+  print set_color($normal_color);
   print "Hosts/Net: " ;
   html("</font></tt></td>\n");
   html('<td valign="top"><tt>');
-#    printf $norml_color . "Hosts/Net: </tt>$quads_color%-22s",$hostn;
+#    printf $normal_color . "Hosts/Net: </tt>$quads_color%-22s",$hostn;
 #    html("<td><tt>");
   print set_color($quads_color);
   printf "%-21s",$hostn;
@@ -399,7 +399,7 @@ sub printnet {
   ##printf "Class %s, ",getclass($network);
   ##printf "%s",netblock($network,$mask1);
 #    my ($label,$address,$mask1,$mask2,$classbitcolor_on,$is_netmask) = @_;
-#    print $sfont . $norml_color;
+#    print $sfont . $normal_color;
 
 #    print "$break\n";
 #   exit;
@@ -414,14 +414,14 @@ sub get_description
   my $field;
   # class
   if ($opt_color || $opt_html) {
-    $field = set_color($norml_color) . "= " . set_color($class_color) . "Class " . getclass($network);
+    $field = set_color($normal_color) . "= " . set_color($class_color) . "Class " . getclass($network);
     if ($opt_html) {
       $field .= '</font>';
     }
-    $field .= set_color($norml_color);
+    $field .= set_color($normal_color);
     push @description, $field
 #      push @description, set_color($class_color) . "Class " .
-#                         getclass($network) . set_color($norml_color);
+#                         getclass($network) . set_color($normal_color);
   } else {
     push @description, "= Class " . getclass($network);
   }
@@ -475,7 +475,7 @@ sub printline
   html("<tr>\n");
   html("<td><tt>");
   #label
-  print set_color($norml_color);
+  print set_color($normal_color);
   if ($opt_html && $html_fillup) {
     print "$label:";
     print "&nbsp;" x (11 - length($label));
@@ -488,7 +488,7 @@ sub printline
   print set_color($quads_color);
   #printf "%s-22s",(ntoa($address).$additional_info);
 
-  #printf "%s%-11s$sfont%s",set_color($norml_color),"$label:",set_color($quads_color);
+  #printf "%s%-11s$sfont%s",set_color($normal_color),"$label:",set_color($quads_color);
   $second_field = ntoa($address).$additional_info;
   if ($opt_html && $html_fillup) {
     print $second_field;
@@ -501,7 +501,7 @@ sub printline
   if ($opt_print_bits)
   {
     html("<td><tt>");
-    $bit_color = set_color($binry_color);
+    $bit_color = set_color($binary_color);
     if ($label eq 'Netmask') {
       $bit_color = set_color($mask_color);
     }
@@ -521,14 +521,14 @@ sub printline
       if ($classbitcolor_on && $bit == 0) {
         $classbitcolor_on = 0;
         if ($newbitcolor_on) {
-          $line .= set_color($subnt_color);
+          $line .= set_color($subnet_color);
         } else {
           $line .= set_color($bit_color);
         }
       }
 #   print "$mask1 $i % 8 == " . (($i) % 8) . "\n";
       if ($i % 8 == 0 && $i < 32) {
-        $line .= set_color($norml_color) . '.';
+        $line .= set_color($normal_color) . '.';
         $line .= set_color('oldcolor');
       }
       if ($i == $mask1) {
@@ -540,11 +540,11 @@ sub printline
           $line .= set_color($bit_color) if ! $classbitcolor_on;
         } else {
           $newbitcolor_on = 1;
-          $line .= set_color($subnt_color) if ! $classbitcolor_on;
+          $line .= set_color($subnet_color) if ! $classbitcolor_on;
         }
       }
     }
-    $line .= set_color($norml_color);
+    $line .= set_color($normal_color);
     print "$line";
     html("</tt></font></td>\n");
   }
