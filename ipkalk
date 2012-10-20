@@ -39,7 +39,6 @@ my $color_old    = "";
 my $color_actual = "";
 
 my $opt_text             = 1;
-my $opt_html             = 0;
 my $opt_color            = 0;
 my $opt_print_bits       = 1;
 my $opt_print_only_class = 0;
@@ -89,27 +88,6 @@ sub main
     $class_color = '';
     $subnet_color = '';
     $sfont  = '';
-  }
-
-  if ($opt_html) {
-    $quads_color = '<font color="#0000ff">' ;
-    $normal_color = '<font color="#000000">';
-    $binary_color = '<font color="#909090">';
-    $mask_color = '<font color="#ff0000">';
-    $class_color = '<font color="#009900">';
-    $subnet_color = '<font color="#663366">';
-    $sfont  = '</font>';
-    $break  = "<br>";
-print << 'EOF';
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
-<title>Bla</title>
-</head>
-<body>
-EOF
-    print "<!-- Version $version -->\n";
   }
 
   # get base address
@@ -175,20 +153,13 @@ EOF
     print "$error\n";
   }
 
-  html('<table border="0" cellspacing="0" cellpadding="0">');
-  html("\n");
   printline ("Address",   $address ,$mask1,$mask1,1);
   printline ("Netmask",   $mask1   ,$mask1,$mask1);
   printline ("Wildcard", ~$mask1   ,$mask1,$mask1);
-  html("<tr>\n");
-  html('<td colspan="3"><tt>');
-  html("</tt></td>\n");
-  html("</tr>\n");
   print "\n";
 
   $network = $address & $mask1;
   printnet($network,$mask1,$mask1);
-  html("</table>\n");
   if ($opt_deaggregate) {
     deaggregate();
   }
@@ -204,22 +175,6 @@ EOF
   if ($mask1 > $mask2) {
     print "Supernet\n\n";
     supernet($network,$mask1,$mask2);
-  }
-  if ($opt_html) {
-    print << 'EOF';
-    <p>
-      <a href="http://validator.w3.org/check/referer"><img border="0"
-          src="http://www.w3.org/Icons/valid-html401"
-          alt="Valid HTML 4.01!" height="31" width="88"></a>
-    </p>
-EOF
-  }
-  exit;
-}
-
-sub end {
-  if ($opt_html) {
-    print "<html>\n";
   }
   exit;
 }
@@ -240,11 +195,8 @@ sub subnets
   my $bitcountmask1 = ntobitcountmask($mask1);
   my $bitcountmask2 = ntobitcountmask($mask2);
 
-  html('<table border="0" cellspacing="0" cellpadding="0">');
-  html("\n");
   printline ("Netmask",   $mask2 ,$mask2,$mask1,1);
   printline ("Wildcard", ~$mask2 ,$mask2,$mask1);
-  html("</table>\n");
 
   print "\n";
 
@@ -252,10 +204,7 @@ sub subnets
   {
     my $net = $network | ($subnet << (32-$bitcountmask2));
     print " ". ($subnet+1) .".\n";
-    html('<table border="0" cellspacing="0" cellpadding="0">');
-    html("\n");
     printnet($net,$mask2,$mask1);
-    html("</table>\n");
     if ($subnet >= 1000) {
       print "... stopped at 1000 subnets ...$break";
       last;
@@ -265,17 +214,13 @@ sub subnets
   my $hostn = ($network | ((~$mask2) & $thirtytwobits)) - $network - 1;
   if ($hostn > -1) {
     print "\nSubnets:   $quads_color$subnet";
-    html('</font>');
     print "$normal_color$break";
-    html('</font>');
   }
   if ($hostn < 1 ) {
     $hostn = 1;
   }
   print "Hosts:     $quads_color" . ($hostn * $subnet);
-  html('</font>');
   print "$normal_color$break";
-  html('</font>');
 }
 
 sub getclass {
@@ -328,24 +273,11 @@ sub printnet {
     printline ("Broadcast", $broadcast,$mask1,$mask2) if $mask < 31;
   }
 
-  html("<tr>\n");
-  html('<td valign="top"><tt>'); #label
   print set_color($normal_color);
   print "Hosts/Net: " ;
-  html("</font></tt></td>\n");
-  html('<td valign="top"><tt>');
   print set_color($quads_color);
   printf "%-21s",$hostn;
-  html("</font></tt></td>\n");
-  html("<td>"); #label
-  if ($opt_html) {
-    print wrap_html(30,get_description($network,$mask1));
-  } else {
-    print get_description($network,$mask1);
-  }
-  html("</font></td>\n");
-  html("</tr>\n");
-  html("\n");
+  print get_description($network,$mask1);
   text("\n");
 
   return $hostn;
@@ -358,11 +290,8 @@ sub get_description
   my @description;
   my $field;
   # class
-  if ($opt_color || $opt_html) {
+  if ($opt_color) {
     $field = set_color($normal_color) . "= " . set_color($class_color) . "Class " . getclass($network);
-    if ($opt_html) {
-      $field .= '</font>';
-    }
     $field .= set_color($normal_color);
     push @description, $field
   } else {
@@ -371,26 +300,18 @@ sub get_description
   # netblock
   my ($netblock_txt,$netblock_url) = split ",",netblock($network,$mask);
   if (defined $netblock_txt) {
-    if ($opt_html) {
-      $netblock_txt = '<a href="' . $netblock_url . '">' .
-      $netblock_txt . '</a>';
-    }
     push @description,$netblock_txt;
   }
   # /31
   if (ntobitcountmask($mask) == 31) {
-    if ($opt_html) {
-      push @description,"<a href=\"http://www.ietf.org/rfc/rfc3021.txt\">PtP Link</a>";
-    } else {
-      push @description,"PtP Link RFC 3021";
-    }
+    push @description,"PtP Link RFC 3021";
   }
   return join ", ",@description;
 }
 
 sub printline
 {
-  my ($label,$address,$mask1,$mask2,$html_fillup) = @_;
+  my ($label,$address,$mask1,$mask2) = @_;
   $mask1 = ntobitcountmask($mask1);
   $mask2 = ntobitcountmask($mask2);
   my $line = "";
@@ -412,33 +333,17 @@ sub printline
     $classbitcolor_on = 1;
   }
 
-  html("<tr>\n");
-  html("<td><tt>");
   #label
   print set_color($normal_color);
-  if ($opt_html && $html_fillup) {
-    print "$label:";
-    print "&nbsp;" x (11 - length($label));
-  } else {
-    printf "%-11s","$label:";
-  }
-  html("</font></tt></td>\n");
+  printf "%-11s","$label:";
   #address
-  html("<td><tt>");
   print set_color($quads_color);
 
   $second_field = ntoa($address).$additional_info;
-  if ($opt_html && $html_fillup) {
-    print $second_field;
-    print "&nbsp;" x (21 - length($second_field));
-  } else {
-    printf "%-21s", (ntoa($address).$additional_info);
-  }
-  html("</font></tt></td>\n");
+  printf "%-21s", (ntoa($address).$additional_info);
 
   if ($opt_print_bits)
   {
-    html("<td><tt>");
     $bit_color = set_color($binary_color);
     if ($label eq 'Netmask') {
       $bit_color = set_color($mask_color);
@@ -483,10 +388,7 @@ sub printline
     }
     $line .= set_color($normal_color);
     print "$line";
-    html("</tt></font></td>\n");
   }
-  html("</tr>\n");
-  html("\n");
   text("\n");
 }
 
@@ -494,14 +396,6 @@ sub text
 {
   my $str = shift;
   if ($opt_text) {
-    print "$str";
-  }
-}
-
-sub html
-{
-  my $str = shift;
-  if ($opt_html) {
     print "$str";
   }
 }
@@ -603,11 +497,7 @@ sub getopts
 # returns @ARGV without options
 # sets global opt variables
 
-# -h --html
-# -h without further opts -> help
-#    (workaround: can't change meaning of -h since this would
-#     break old cgi_wrapper scripts)
-# --help
+# -h --help
 # -n --nocolor
 # -v --version
 # -c --class print natural class
@@ -668,11 +558,6 @@ sub getopts
     $opt_deaggregate = 1;
   }
 
-  # workaround for -h
-  if ($opt_html && $nr_opts == 1 && $#arguments == -1) {
-    $opt_help = 1;
-  }
-
   if ($error) {
     print "$error";
     exit;
@@ -685,11 +570,7 @@ sub getopts
     foreach my $opt (@_)
     {
       ++$opts_read;
-      if ($opt eq 'h' || $opt eq 'html') {
-        $opt_html = 1;
-        $opt_text = 0;
-      }
-      elsif ($opt eq 'help') {
+      if ($opt eq 'h' || $opt eq 'help') {
         $opt_help = 1;
       }
       elsif ($opt eq 'n' || $opt eq 'nocolor') {
@@ -730,62 +611,6 @@ sub getopts
     }
     return 0;
   }
-}
-
-# expects int width
-#         string
-# returns wrapped string
-sub wrap_html
-{
-  my $width = shift;
-  my $str   = shift;
-  my @str = split //,$str;
-  my $result;
-  my $current_pos = 0;
-  my $start = 0;
-  my $last_pos = 0;
-  my $line;
-  while ($current_pos < $#str)
-  {
-    # find next blank
-    while ($current_pos < $#str && $str[$current_pos] ne ' ') {
-      # ignore tags
-      if ($str[$current_pos] eq '<') {
-        $current_pos++;
-        while ($str[$current_pos] ne '>') {
-          $current_pos++;
-        }
-      }
-      $current_pos++;
-    }
-    # fits in one line?...
-    $line = substr($str,$start,$current_pos-$start);
-    $line =~ s/<.+?>//g;
-    if ( length($line) <= $width) {
-      # ... yes. keep position in mind and try next
-      $last_pos = $current_pos;
-      $current_pos++;
-      next;
-    } else {
-      # ...no. wrap at last position (if there was one,
-      # otherwise wrap here)
-      if ($last_pos ne $start) {
-        $current_pos = $last_pos;
-      }
-      $line = substr($str,$start,$current_pos-$start);
-      $current_pos++;
-      $start = $current_pos;
-      $last_pos = $start;
-      # no output if end of string is reached because
-      # rest of string is treated after this block
-      if ($current_pos < $#str) {
-        $result .= "$line<br>";
-      }
-    }
-  }
-  $line = substr($str,$start,$current_pos-$start);
-  $result .= "$line";
-  return $result;
 }
 
 # gets network address as dq
@@ -948,12 +773,11 @@ and presents the results as easy-to-understand binary values.
  -n --nocolor  Don't display ANSI color codes.
  -b --nobinary Suppress the bitwise output.
  -c --class    Just print bit-count-mask of given address.
- -h --html     Display results as HTML (not finished in this version).
  -v --version  Print Version.
  -s --split n1 n2 n3
                Split into networks of size n1, n2, n3.
  -r --range    Deaggregate address range.
-    --help     Longer help text.
+ -h --help     Longer help text.
 
 Examples:
 
@@ -968,8 +792,6 @@ ipcalc <ADDRESS1> - <ADDRESS2>  deaggregate address range
 ipcalc <ADDRESS>/<NETMASK> --s a b c
                                 split network to subnets
                                 where a b c fits in.
-
-! New HTML support not yet finished.
 
 ipcalc $version
 EOF
