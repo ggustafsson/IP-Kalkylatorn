@@ -32,9 +32,6 @@ my $class_color  = "\033[0m\033[36m"; # Cyan
 my $subnet_color = "\033[0m\033[32m"; # Green
 my $error_color  = "\033[0m\033[31m";
 
-my $sfont = "";
-my $break = "\n";
-
 my $color_old    = "";
 my $color_actual = "";
 
@@ -87,7 +84,6 @@ sub main
     $mask_color = '';
     $class_color = '';
     $subnet_color = '';
-    $sfont  = '';
   }
 
   # get base address
@@ -206,7 +202,7 @@ sub subnets
     print " ". ($subnet+1) .".\n";
     printnet($net,$mask2,$mask1);
     if ($subnet >= 1000) {
-      print "... stopped at 1000 subnets ...$break";
+      print "... stopped at 1000 subnets ...\n";
       last;
     }
   }
@@ -214,13 +210,13 @@ sub subnets
   my $hostn = ($network | ((~$mask2) & $thirtytwobits)) - $network - 1;
   if ($hostn > -1) {
     print "\nSubnets:   $quads_color$subnet";
-    print "$normal_color$break";
+    print "$normal_color\n";
   }
   if ($hostn < 1 ) {
     $hostn = 1;
   }
   print "Hosts:     $quads_color" . ($hostn * $subnet);
-  print "$normal_color$break";
+  print "$normal_color\n";
 }
 
 sub getclass {
