@@ -24,12 +24,12 @@ my $version = '0.41';
 
 my @class = qw (0 8 16 24 4 5 5);
 
-my $quads_color  = "\033[1;36m";      # dotted quads, cyan
-my $normal_color = "\033[0m";         # normal, default
-my $binary_color = "\033[0m\033[33m"; # binary, yellow
-my $mask_color   = "\033[0m\033[31m"; # netmask, red
-my $class_color  = "\033[0m\033[35m"; # classbits, magenta
-my $subnet_color = "\033[0m\033[32m"; # subnet bits, green
+my $quads_color  = "\033[1;36m";      # Bold cyan
+my $normal_color = "\033[0m";         # Default
+my $binary_color = "\033[0m\033[33m"; # Yellow
+my $mask_color   = "\033[0m\033[31m"; # Red
+my $class_color  = "\033[0m\033[36m"; # Cyan
+my $subnet_color = "\033[0m\033[32m"; # Green
 my $error_color  = "\033[0m\033[31m";
 
 my $sfont = "";
