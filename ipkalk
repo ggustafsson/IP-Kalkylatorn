@@ -20,12 +20,12 @@
 
 use strict;
 
-my $version = '0.41';
+my $version = "0.41";
 
 my @class = qw (0 8 16 24 4 5 5);
 
-my $quads_color  = "\033[1;36m";      # Bold cyan
 my $normal_color = "\033[0m";         # Default
+my $quads_color  = "\033[1;36m";      # Bold cyan
 my $binary_color = "\033[0m\033[33m"; # Yellow
 my $mask_color   = "\033[0m\033[31m"; # Red
 my $class_color  = "\033[0m\033[36m"; # Cyan
@@ -52,8 +52,7 @@ my $thirtytwobits = 4294967295; # for masking bitwise not on 64 bit arch
 main();
 exit;
 
-sub main
-{
+sub main {
   my $address  = -1;
   my $address2 = -1;
   my $network  = -1;
@@ -78,33 +77,35 @@ sub main
   }
 
   if (! $opt_color) {
-    $quads_color = '';
-    $normal_color = '';
-    $binary_color = '';
-    $mask_color = '';
-    $class_color = '';
-    $subnet_color = '';
+    $normal_color = "";
+    $quads_color  = "";
+    $binary_color = "";
+    $mask_color   = "";
+    $class_color  = "";
+    $subnet_color = "";
   }
 
   # get base address
   if (defined $ARGV[0]) {
-    $address = argton($ARGV[0],0);
+    $address = argton($ARGV[0], 0);
   }
+
   if ($address == -1) {
     $error  .= "INVALID ADDRESS: $ARGV[0]\n";
     $address = argton("192.168.1.1");
   }
 
   if ($opt_print_only_class) {
-    print getclass($address,1);
+    print getclass($address, 1);
     exit;
   }
 
   # if deaggregate get last address
   if ($opt_deaggregate) {
     if (defined $ARGV[1]) {
-      $address2 = argton($ARGV[1],0);
+      $address2 = argton($ARGV[1], 0);
     }
+
     if ($address2 == -1) {
       $error   .= "INVALID ADDRESS2: $ARGV[1]\n";
       $address2 = argton("192.168.1.1");
@@ -115,28 +116,32 @@ sub main
     if ($error) {
       print "$error\n";
     }
-    print "deaggregate ".ntoa($address) . " - " . ntoa($address2)."\n";
-    deaggregate($address,$address2);
+
+    print "deaggregate " . ntoa($address) . " - " . ntoa($address2) . "\n";
+    deaggregate($address, $address2);
+
     exit;
   }
 
   # get netmasks
   if (defined $ARGV[1]) {
-    $mask1 = argton($ARGV[1],1);
+    $mask1 = argton($ARGV[1], 1);
   } else {
     #get natural mask ***
     $mask1 = argton(24);
   }
+
   if ($mask1 == -1) {
     $error .= "INVALID MASK1:   $ARGV[1]\n";
     $mask1  = argton(24);
   }
 
   if (defined $ARGV[2]) {
-    $mask2 = argton($ARGV[2],1);
+    $mask2 = argton($ARGV[2], 1);
   } else {
     $mask2 = $mask1;
   }
+
   if ($mask2 == -1) {
     $error .= "INVALID MASK2:   $ARGV[2]\n";
     $mask2  = argton(24);
@@ -149,72 +154,81 @@ sub main
     print "$error\n";
   }
 
-  printline ("Address",   $address ,$mask1,$mask1,1);
-  printline ("Netmask",   $mask1   ,$mask1,$mask1);
-  printline ("Wildcard", ~$mask1   ,$mask1,$mask1);
+  printline ("Address",   $address, $mask1, $mask1, 1);
+  printline ("Netmask",   $mask1,   $mask1, $mask1);
+  printline ("Wildcard", ~$mask1,   $mask1, $mask1);
   print "\n";
 
   $network = $address & $mask1;
-  printnet($network,$mask1,$mask1);
+  printnet($network, $mask1, $mask1);
+
   if ($opt_deaggregate) {
     deaggregate();
   }
+
   if ($opt_split) {
-    split_network($network,$mask1,$mask2,@opt_split_sizes);
+    split_network($network, $mask1, $mask2, @opt_split_sizes);
     exit;
   }
+
   if ($mask1 < $mask2) {
     print "Subnets after transition from /" . ntobitcountmask($mask1);
-    print " to /". ntobitcountmask($mask2) . "\n\n";
-    subnets($network,$mask1,$mask2);
+    print " to /" . ntobitcountmask($mask2) . "\n\n";
+    subnets($network, $mask1, $mask2);
   }
+
   if ($mask1 > $mask2) {
     print "Supernet\n\n";
-    supernet($network,$mask1,$mask2);
+    supernet($network, $mask1, $mask2);
   }
+
   exit;
 }
 
 sub supernet {
-  my ($network,$mask1,$mask2) = @_;
+  my ($network, $mask1, $mask2) = @_;
   $network = $network & $mask2;
-  printline ("Netmask",   $mask2 ,$mask2,$mask1,1);
-  printline ("Wildcard", ~$mask2 ,$mask2,$mask1);
+
+  printline ("Netmask",   $mask2, $mask2, $mask1, 1);
+  printline ("Wildcard", ~$mask2, $mask2, $mask1);
   print "\n";
-  printnet($network,$mask2,$mask1);
+  printnet($network, $mask2, $mask1);
 }
 
-sub subnets
-{
-  my ($network,$mask1,$mask2) = @_;
-  my $subnet=0;
+sub subnets {
+  my ($network, $mask1, $mask2) = @_;
+  my $subnet = 0;
   my $bitcountmask1 = ntobitcountmask($mask1);
   my $bitcountmask2 = ntobitcountmask($mask2);
 
-  printline ("Netmask",   $mask2 ,$mask2,$mask1,1);
-  printline ("Wildcard", ~$mask2 ,$mask2,$mask1);
-
+  printline ("Netmask",   $mask2, $mask2, $mask1, 1);
+  printline ("Wildcard", ~$mask2, $mask2, $mask1);
   print "\n";
 
-  for ($subnet=0; $subnet < (1 << ($bitcountmask2-$bitcountmask1)); $subnet++)
-  {
-    my $net = $network | ($subnet << (32-$bitcountmask2));
-    print " ". ($subnet+1) .".\n";
-    printnet($net,$mask2,$mask1);
+  for ($subnet = 0; $subnet < (1 << ($bitcountmask2 - $bitcountmask1)); $subnet++) {
+    my $net = $network | ($subnet << (32 - $bitcountmask2));
+
+    print " " . ($subnet + 1) . ".\n";
+    printnet($net, $mask2, $mask1);
+
     if ($subnet >= 1000) {
       print "... stopped at 1000 subnets ...\n";
       last;
     }
   }
-  $subnet = (1 << ($bitcountmask2-$bitcountmask1));
+
+  $subnet = (1 << ($bitcountmask2 - $bitcountmask1));
   my $hostn = ($network | ((~$mask2) & $thirtytwobits)) - $network - 1;
+
   if ($hostn > -1) {
     print "\nSubnets:   $quads_color$subnet";
     print "$normal_color\n";
   }
+
   if ($hostn < 1 ) {
     $hostn = 1;
   }
+
   print "Hosts:     $quads_color" . ($hostn * $subnet);
   print "$normal_color\n";
 }
@@ -222,10 +236,11 @@ sub subnets
 sub getclass {
   my $network = shift;
   my $numeric = shift;
-  my $class = 1;
+  my $class   = 1;
 
-  while (($network & (1 << (32-$class))) == (1 << (32-$class)) ) {
+  while (($network & (1 << (32 - $class))) == (1 << (32 - $class))) {
     $class++;
+
     if ($class > 5) {
       return "invalid\n";
     }
@@ -234,114 +249,118 @@ sub getclass {
   if ($numeric) {
     return $class[$class] . "\n";
   } else {
-    return chr($class+64);
+    return chr($class + 64);
   }
 }
 
 sub printnet {
-  my ($network,$mask1,$mask2) = @_;
+  my ($network, $mask1, $mask2) = @_;
   my $hmin;
   my $hmax;
   my $hostn;
   my $mask;
-
   my $broadcast = $network | ((~$mask1) & $thirtytwobits);
 
   $hmin  = $network + 1;
   $hmax  = $broadcast - 1;
-  $hostn =  $hmax - $hmin + 1;
+  $hostn = $hmax - $hmin + 1;
   $mask  = ntobitcountmask($mask1);
+
   if ($mask == 31) {
     $hmax  = $broadcast;
     $hmin  = $network;
     $hostn = 2;
-  }
-  if ($mask == 32) {
+  } elsif ($mask == 32) {
     $hostn = 1;
   }
 
   if ($mask == 32) {
-    printline ("Hostroute", $network ,$mask1,$mask2,1);
+    printline ("Hostroute", $network, $mask1, $mask2, 1);
   } else {
-    printline ("Network",   $network  ,$mask1,$mask2,1);
-    printline ("Host Min",  $hmin     ,$mask1,$mask2);
-    printline ("Host Max",  $hmax     ,$mask1,$mask2);
-    printline ("Broadcast", $broadcast,$mask1,$mask2) if $mask < 31;
+    printline ("Network",   $network,   $mask1, $mask2, 1);
+    printline ("Host Min",  $hmin,      $mask1, $mask2);
+    printline ("Host Max",  $hmax,      $mask1, $mask2);
+    printline ("Broadcast", $broadcast, $mask1, $mask2) if $mask < 31;
   }
 
   print set_color($normal_color);
   print "Hosts/Net: " ;
   print set_color($quads_color);
-  printf "%-21s",$hostn;
-  print get_description($network,$mask1);
+  printf "%-21s", $hostn;
+  print get_description($network, $mask1);
   text("\n");
 
   return $hostn;
 }
 
-sub get_description
-{
+sub get_description {
   my $network = shift;
   my $mask    = shift;
   my @description;
   my $field;
+
   # class
   if ($opt_color) {
-    $field = set_color($normal_color) . "= " . set_color($class_color) . "Class " . getclass($network);
-    $field .= set_color($normal_color);
+    $field  = set_color($normal_color) . "= " . set_color($class_color) . "Class " . getclass($network) . set_color($normal_color);
     push @description, $field
   } else {
     push @description, "= Class " . getclass($network);
   }
+
   # netblock
-  my ($netblock_txt,$netblock_url) = split ",",netblock($network,$mask);
+  my ($netblock_txt, $netblock_url) = split ",", netblock($network, $mask);
+
   if (defined $netblock_txt) {
-    push @description,$netblock_txt;
+    push @description, $netblock_txt;
   }
+
   # /31
   if (ntobitcountmask($mask) == 31) {
-    push @description,"PtP Link RFC 3021";
+    push @description, "PtP Link RFC 3021";
   }
-  return join ", ",@description;
+
+  return join ", ", @description;
 }
 
-sub printline
-{
-  my ($label,$address,$mask1,$mask2) = @_;
+sub printline {
+  my ($label, $address, $mask1, $mask2) = @_;
   $mask1 = ntobitcountmask($mask1);
   $mask2 = ntobitcountmask($mask2);
   my $line = "";
   my $bit;
-  my $newbitcolor_on = 0;
+  my $newbitcolor_on     = 0;
   my $toggle_newbitcolor = 0;
   my $bit_color;
-  my $additional_info = '';
+  my $additional_info = "";
   my $classbitcolor_on;
   my $second_field;
-  if ($label eq 'Netmask') {
+
+  if ($label eq "Netmask") {
     $additional_info = " = $mask1";
   }
-  if ($label eq 'Network') {
+
+  if ($label eq "Network") {
     $classbitcolor_on = 1;
     $additional_info = "/$mask1";
   }
-  if ($label eq 'Hostroute' && $mask1 == 32) {
+
+  if ($label eq "Hostroute" && $mask1 == 32) {
     $classbitcolor_on = 1;
   }
 
   #label
   print set_color($normal_color);
-  printf "%-11s","$label:";
+  printf "%-11s", "$label:";
   #address
   print set_color($quads_color);
 
-  $second_field = ntoa($address).$additional_info;
-  printf "%-21s", (ntoa($address).$additional_info);
+  $second_field = ntoa($address) . $additional_info;
+  printf "%-21s", (ntoa($address) . $additional_info);
 
-  if ($opt_print_bits)
-  {
+  if ($opt_print_bits) {
     $bit_color = set_color($binary_color);
-    if ($label eq 'Netmask') {
+
+    if ($label eq "Netmask") {
       $bit_color = set_color($mask_color);
     }
 
@@ -350,28 +369,35 @@ sub printline
     } else {
       $line .= set_color($bit_color);
     }
-    for (my $i=1;$i<33;$i++)
-    {
+
+    for (my $i = 1; $i < 33; $i++) {
       $bit = 0;
-      if (($address & (1 << 32-$i)) == (1 << 32-$i)) {
+
+      if (($address & (1 << 32 - $i)) == (1 << 32 - $i)) {
         $bit = 1;
       }
+
       $line .= $bit;
+
       if ($classbitcolor_on && $bit == 0) {
         $classbitcolor_on = 0;
+
         if ($newbitcolor_on) {
           $line .= set_color($subnet_color);
         } else {
           $line .= set_color($bit_color);
         }
       }
+
       if ($i % 8 == 0 && $i < 32) {
-        $line .= set_color($normal_color) . '.';
-        $line .= set_color('oldcolor');
+        $line .= set_color($normal_color) . ".";
+        $line .= set_color("oldcolor");
       }
+
       if ($i == $mask1) {
         $line .= " ";
       }
+
       if (($i == $mask1 || $i == $mask2) && $mask1 != $mask2) {
         if ($newbitcolor_on) {
           $newbitcolor_on = 0;
@@ -382,38 +408,42 @@ sub printline
         }
       }
     }
+
     $line .= set_color($normal_color);
     print "$line";
   }
+
   text("\n");
 }
 
-sub text
-{
+sub text {
   my $str = shift;
+
   if ($opt_text) {
     print "$str";
   }
 }
 
-sub set_color
-{
+sub set_color {
   my $new_color = shift;
   my $return;
+
   if ($new_color eq $color_old) {
-    $return = '';
+    $return = "";
   }
-  if ($new_color eq 'oldcolor') {
+
+  if ($new_color eq "oldcolor") {
     $new_color = $color_old;
   }
+
   $color_old = $color_actual;
   $color_actual = $new_color;
   $return .= $new_color;
+
   return $return;
 }
 
-sub split_network
-{
+sub split_network {
   my $network = shift;
   my $mask1   = shift;
   my $mask2   = shift;
@@ -422,85 +452,85 @@ sub split_network
   my $first_address = $network;
   my $broadcast = $network | ((~$mask1) & $thirtytwobits);
   my @network;
-  my $i=0;
+  my $i = 0;
   my @net;
   my @mask;
   my $needed_addresses = 0;
   my $needed_size;
+
   foreach (@sizes) {
-    $needed_size = round2powerof2($_+2);
-    push @network , $needed_size .":".$i++;
+    $needed_size = round2powerof2($_ + 2);
+    push @network, $needed_size . ":" . $i++;
     $needed_addresses += $needed_size;
   }
+
   @network = sort { ($b =~ /(.+):/)[0] <=> ($a =~ /(.+):/)[0] } @network;
   foreach (@network) {
-    my ($size,$nr) = split ":",$_;
-    $net[$nr]=  $network;
-    $mask[$nr]= (32-log($size)/log(2));
-    $network += $size;
-  }
-  $i = -1;
-  while ($i++ < $#sizes) {
-    printf "\n%d. Requested size: %d hosts\n", $i+1,$sizes[$i];
-    printline("Netmask",bitcountmaskton($mask[$i]),bitcountmaskton($mask[$i]),$mask2);
-    printnet($net[$i],bitcountmaskton($mask[$i]),$mask2);
+    my ($size, $nr) = split ":", $_;
+    $net[$nr]  = $network;
+    $mask[$nr] = (32 - log($size) / log(2));
+    $network  += $size;
   }
 
-  my $used_mask = 32-log(round2powerof2($needed_addresses))/log(2);
+  $i = -1;
+  while ($i++ < $#sizes) {
+    printf "\n%d. Requested size: %d hosts\n", $i + 2, $sizes[$i];
+    printline("Netmask", bitcountmaskton($mask[$i]), bitcountmaskton($mask[$i]), $mask2);
+    printnet($net[$i], bitcountmaskton($mask[$i]), $mask2);
+  }
+
+  my $used_mask = 32 - log(round2powerof2($needed_addresses)) / log(2);
   if ($used_mask < ntobitcountmask($mask1)) {
     print "\nNetwork is too small\n";
   }
-  print "\nNeeded size:  ". $needed_addresses . " addresses.\n";
-  print "Used network: ". ntoa($first_address) ."/$used_mask\n";
+
+  print "\nNeeded size:  " . $needed_addresses . " addresses.\n";
+  print "Used network: " . ntoa($first_address) . "/$used_mask\n";
   print "Unused:\n";
-  deaggregate($network,$broadcast);
+  deaggregate($network, $broadcast);
 }
 
 sub round2powerof2 {
-  my $i=0;
-  while ($_[0] > ( 1 << $i)) {
+  my $i = 0;
+
+  while ($_[0] > (1 << $i)) {
     $i++;
   }
+
   return 1 << $i;
 }
 
-# Deaggregate address range
-# expects: range: (dotted quads)start (dotted quads)end
+sub deaggregate {
+  # Deaggregate address range
+  # expects: range: (dotted quads)start (dotted quads)end
 
-sub deaggregate
-{
   my $start = shift;
   my $end   = shift;
-  my $base = $start;
+  my $base  = $start;
   my $step;
-  while ($base <= $end)
-  {
+
+  while ($base <= $end) {
     $step = 0;
-    while (($base | (1 << $step))  != $base) {
-      if (($base | (((~0) & $thirtytwobits) >> (31-$step))) > $end) {
+
+    while (($base | (1 << $step)) != $base) {
+      if (($base | (((~0) & $thirtytwobits) >> (31 - $step))) > $end) {
         last;
       }
+
       $step++;
     }
-    print "- " . ntoa($base)."/" .(32-$step);
+
+    print "- " . ntoa($base) . "/" . (32 - $step);
     print "\n";
     $base += 1 << $step;
   }
 }
 
-sub getopts
-# expects nothing
-# returns @ARGV without options
-# sets global opt variables
+sub getopts {
+  # expects nothing
+  # returns @ARGV without options
+  # sets global opt variables
 
-# -h --help
-# -n --nocolor
-# -v --version
-# -c --class print natural class
-# -s --split
-# -b --nobinary
-# -d --deaggregate
-{
   my @arguments;
   my $arg;
   my $prefix;
@@ -515,42 +545,38 @@ sub getopts
   while (has_opts()) {
     $arg = shift @ARGV;
     if ($arg =~ /^--(.+)/) {
-      $nr_opts += read_opt('--',$1);
-    }
-    elsif ($arg =~ /^-(.+)/) {
-      $nr_opts += read_opt('-',split //,$1);
-    }
-    else {
+      $nr_opts += read_opt("--", $1);
+    } elsif ($arg =~ /^-(.+)/) {
+      $nr_opts += read_opt("-", split //, $1);
+    } else {
       push @tmp, $arg;
     }
   }
 
   foreach (@ARGV) {
-    push @tmp,$_;
+    push @tmp, $_;
   }
+
   # extract base address and netmasks and ranges
   foreach (@tmp) {
     if (/^(.+?)\/(.+)$/) {
-      push @arguments,$1;
-      push @arguments,$2;
-    }
-    elsif (/^(.+)\/$/) {
-      push @arguments,$1;
-    }
-    elsif (/^(.+)\-(.+)$/) {
-      push @arguments,$1;
-      push @arguments,$2;
+      push @arguments, $1;
+      push @arguments, $2;
+    } elsif (/^(.+)\/$/) {
+      push @arguments, $1;
+    } elsif (/^(.+)\-(.+)$/) {
+      push @arguments, $1;
+      push @arguments, $2;
       $opt_deaggregate = 1;
-    }
-    elsif (/^\-$/) {
+    } elsif (/^\-$/) {
       $opt_deaggregate = 1;
-    }
-    else {
+    } else {
       push @arguments, $_;
     }
   }
-  if ($#arguments == 2 && $arguments[1] eq '-') {
-    @arguments = ($arguments[0],$arguments[2]);
+
+  if ($#arguments == 2 && $arguments[1] eq "-") {
+    @arguments = ($arguments[0], $arguments[2]);
     $opt_deaggregate = 1;
   }
 
@@ -558,46 +584,44 @@ sub getopts
     print "$error";
     exit;
   }
+
   return @arguments;
 
   sub read_opt {
-    my $prefix = shift;
+    my $prefix    = shift;
     my $opts_read = 0;
-    foreach my $opt (@_)
-    {
+
+    foreach my $opt (@_) {
       ++$opts_read;
-      if ($opt eq 'h' || $opt eq 'help') {
+
+      if ($opt eq "h" || $opt eq "help") {
         $opt_help = 1;
-      }
-      elsif ($opt eq 'n' || $opt eq 'nocolor') {
+      } elsif ($opt eq "n" || $opt eq "nocolor") {
         $opt_color = 0;
-      }
-      elsif ($opt eq 'v' || $opt eq 'version') {
+      } elsif ($opt eq "v" || $opt eq "version") {
         $opt_version = 1;
-      }
-      elsif ($opt eq 'b' || $opt eq 'nobinary') {
+      } elsif ($opt eq "b" || $opt eq "nobinary") {
         $opt_print_bits = 0;
-      }
-      elsif ($opt eq 'c' || $opt eq 'class') {
-        $opt_print_only_class =  1;
-      }
-      elsif ($opt eq 'r' || $opt eq 'range') {
-        $opt_deaggregate =  1;
-      }
-      elsif ($opt eq 's' || $opt eq 'split') {
+      } elsif ($opt eq "c" || $opt eq "class") {
+        $opt_print_only_class = 1;
+      } elsif ($opt eq "r" || $opt eq "range") {
+        $opt_deaggregate = 1;
+      } elsif ($opt eq "s" || $opt eq "split") {
         $opt_split = 1;
+
         while (defined $ARGV[0] && $ARGV[0] =~ /^\d+$/) {
           push @opt_split_sizes, shift @ARGV;
         }
+
         if ($#opt_split_sizes < 0) {
-          $error .= "Argument for ". $prefix . $opt . " is missing or invalid \n";
+          $error .= "Argument for " . $prefix . $opt . " is missing or invalid \n";
         }
-      }
-      else {
+      } else {
         $error .= "Unknown option: " . $prefix . $opt . "\n";
         --$opts_read;
       }
     }
+
     return $opts_read;
   }
 
@@ -609,11 +633,11 @@ sub getopts
   }
 }
 
-# gets network address as dq
-# returns string description,string url
-sub netblock
-{
-  my ($mynetwork_start,$mymask) = @_;
+sub netblock {
+  # gets network address as dq
+  # returns string description,string url
+
+  my ($mynetwork_start, $mymask) = @_;
   my $mynetwork_end = $mynetwork_start | ((~$mymask) & $thirtytwobits);
   my %netblocks = ( "192.168.0.0/16" => "Private Internet,http://www.ietf.org/rfc/rfc1918.txt",
                     "172.16.0.0/12"  => "Private Internet,http://www.ietf.org/rfc/rfc1918.txt",
@@ -623,49 +647,55 @@ sub netblock
                     "224.0.0.0/4"    => "Multicast,http://www.ietf.org/rfc/rfc3171.txt"
                   );
   my $match = 0;
-  #
+
   foreach (keys %netblocks) {
-    my ($network,$mask) = split "/",$_;
+    my ($network, $mask) = split "/", $_;
     my $start = argton($network);
-    my $end   = $start + (1 << (32-$mask)) -1;
+    my $end   = $start + (1 << (32 - $mask)) -1;
+
     # mynetwork starts within block
     if ($mynetwork_start >= $start && $mynetwork_start <= $end) {
       $match++;
     }
+
     # mynetwork ends within block
     if ($mynetwork_end >= $start && $mynetwork_end <= $end) {
       $match++;
     }
+
     # block is part of mynetwork
     if ($start > $mynetwork_start && $end < $mynetwork_end) {
       $match = 1;
     }
+
     if ($match == 1) {
-      return "In Part ".$netblocks{$_};
+      return "In Part " . $netblocks{$_};
     }
     if ($match == 2) {
       return $netblocks{$_};
     }
   }
+
   return "";
 }
 
-sub bitcountmaskton
-{
+sub bitcountmaskton {
   my $bitcountmask = shift;
   my $n;
-  for (my $i=0;$i<$bitcountmask;$i++) {
-    $n |= 1 << (31-$i);
+
+  for (my $i = 0; $i < $bitcountmask; $i++) {
+    $n |= 1 << (31 - $i);
   }
+
   return $n;
 }
 
-sub argton
-# expects 1. an address as dotted decimals, bit-count-mask, or hex
-#         2. netmask flag. if set -> check netmask and negate wildcard
-#            masks
-# returns integer or -1 if invalid
-{
+sub argton {
+  # expects 1. an address as dotted decimals, bit-count-mask, or hex
+  #         2. netmask flag. if set -> check netmask and negate wildcard
+  #            masks
+  # returns integer or -1 if invalid
+
   my $arg          = shift;
   my $netmask_flag = shift;
 
@@ -673,18 +703,22 @@ sub argton
   my $n = 0;
 
   # dotted decimals
-  if    ($arg =~ /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/) {
-    my @decimals = ($1,$2,$3,$4);
+  if ($arg =~ /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/) {
+    my @decimals = ($1, $2, $3, $4);
+
     foreach (@decimals) {
       if ($_ > 255 || $_ < 0) {
         return -1;
       }
+
       $n += $_ << $i;
       $i -= 8;
     }
+
     if ($netmask_flag) {
       return validate_netmask($n);
     }
+
     return $n;
   }
 
@@ -694,36 +728,39 @@ sub argton
     if ($arg < 1 || $arg > 32) {
       return -1;
     }
-    for ($i=0;$i<$arg;$i++) {
-      $n |= 1 << (31-$i);
+
+    for ($i = 0; $i < $arg; $i++) {
+      $n |= 1 << (31 - $i);
     }
+
     return $n;
   }
 
   # hex
-  if ($arg =~   /^[0-9A-Fa-f]{8}$/ ||
-    $arg =~ /^0x[0-9A-Fa-f]{8}$/  ) {
+  if ($arg =~ /^[0-9A-Fa-f]{8}$/ || $arg =~ /^0x[0-9A-Fa-f]{8}$/) {
     if ($netmask_flag) {
       return validate_netmask(hex($arg));
     }
+
     return hex($arg);
   }
 
   # invalid
   return -1;
 
-  sub validate_netmask
-  {
-    my $mask = shift;
+  sub validate_netmask {
+    my $mask     = shift;
     my $saw_zero = 0;
+
     # negate wildcard
     if (($mask & (1 << 31)) == 0) {
       print "WILDCARD\n";
       $mask = ~$mask;
     }
+
     # find ones following zeros
-    for (my $i=0;$i<32;$i++) {
-      if (($mask & (1 << (31-$i))) == 0) {
+    for (my $i = 0; $i < 32; $i++) {
+      if (($mask & (1 << (31 - $i))) == 0) {
         $saw_zero = 1;
       } else {
         if ($saw_zero) {
@@ -732,28 +769,31 @@ sub argton
         }
       }
     }
+
     return $mask;
   }
 }
 
-sub ntoa
-{
-  return join ".",unpack("CCCC",pack("N",shift));
+sub ntoa {
+  return join ".", unpack("CCCC", pack("N", shift));
 }
 
-sub ntobitcountmask
-# expects integer
-# returns bitcountmask
-{
-  my $mask = shift;
+sub ntobitcountmask {
+  # expects integer
+  # returns bitcountmask
+
+  my $mask         = shift;
   my $bitcountmask = 0;
+
   # find first zero
-  while ( ($mask & (1 << (31-$bitcountmask))) != 0 ) {
+  while (($mask & (1 << (31 - $bitcountmask))) != 0) {
     if ($bitcountmask > 31) {
       last;
     }
+
     $bitcountmask++;
   }
+
   return $bitcountmask;
 }
 
