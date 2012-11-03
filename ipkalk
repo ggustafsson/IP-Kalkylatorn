@@ -30,7 +30,7 @@ my $binary_color = "\033[0m\033[33m"; # Yellow
 my $mask_color   = "\033[0m\033[31m"; # Red
 my $class_color  = "\033[0m\033[36m"; # Cyan
 my $subnet_color = "\033[0m\033[32m"; # Green
-my $error_color  = "\033[0m\033[31m";
+my $error_color  = "\033[1;31m";      # Bold red
 
 my $color_old    = "";
 my $color_actual = "";
@@ -447,7 +447,7 @@ sub split_network {
   my $network = shift;
   my $mask1   = shift;
   my $mask2   = shift;
-  my @sizes   = @_;
+  my @sizes   = reverse sort { $a <=> $b } @_;
 
   my $first_address = $network;
   my $broadcast = $network | ((~$mask1) & $thirtytwobits);
@@ -474,14 +474,14 @@ sub split_network {
 
   $i = -1;
   while ($i++ < $#sizes) {
-    printf "\n%d. Requested size: %d hosts\n", $i + 2, $sizes[$i];
+    printf "\nSubnet %d. Requested size: %d host(s)\n", $i + 1, $sizes[$i];
     printline("Netmask", bitcountmaskton($mask[$i]), bitcountmaskton($mask[$i]), $mask2);
     printnet($net[$i], bitcountmaskton($mask[$i]), $mask2);
   }
 
   my $used_mask = 32 - log(round2powerof2($needed_addresses)) / log(2);
   if ($used_mask < ntobitcountmask($mask1)) {
-    print "\nNetwork is too small\n";
+    print set_color($error_color) . "\nNetwork is too small!\n" . set_color($normal_color);
   }
 
   print "\nNeeded size:  " . $needed_addresses . " addresses.\n";
