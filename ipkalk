@@ -176,7 +176,7 @@ sub main {
   }
 
   if ($mask1 < $mask2) {
-    print "Subnets after transition from /" . ntobitcountmask($mask1);
+    print "\nSubnets after transition from /" . ntobitcountmask($mask1);
     print " to /" . ntobitcountmask($mask2) . "\n\n";
     subnets($network, $mask1, $mask2);
   }
@@ -212,11 +212,12 @@ sub subnets {
   for ($subnet = 0; $subnet < (1 << ($bitcountmask2 - $bitcountmask1)); $subnet++) {
     my $net = $network | ($subnet << (32 - $bitcountmask2));
 
-    print " " . ($subnet + 1) . ".\n";
+    print "- Subnet " . ($subnet + 1) . "\n";
     printnet($net, $mask2, $mask1);
+    print "\n";
 
     if ($subnet >= 1000) {
-      print "... stopped at 1000 subnets ...\n";
+      print "\n... Stopped at 1000 subnets ...\n";
       last;
     }
   }
@@ -225,7 +226,7 @@ sub subnets {
   my $hostn = ($network | ((~$mask2) & $thirtytwobits)) - $network - 1;
 
   if ($hostn > -1) {
-    print "\nSubnets:   $quads_color$subnet";
+    print "Subnets:   $quads_color$subnet";
     print "$normal_color\n";
   }
 
@@ -478,7 +479,7 @@ sub split_network {
 
   $i = -1;
   while ($i++ < $#sizes) {
-    printf "\nSubnet %d. Requested size: %d host(s)\n", $i + 1, $sizes[$i];
+    printf "\n- Subnet %d. Requested size: %d host(s)\n", $i + 1, $sizes[$i];
     printline("Netmask", bitcountmaskton($mask[$i]), bitcountmaskton($mask[$i]), $mask2);
     printnet($net[$i], bitcountmaskton($mask[$i]), $mask2);
   }
