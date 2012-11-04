@@ -848,6 +848,7 @@ Git: git://github.com/ggustafsson/IP-Kalkylatorn.git
 
 Based on ipcalc created by Krischan Jodies <krischan\@jodies.de>.
 Forked and modified by Göran Gustafsson <gustafsson.g\@gmail.com>.
+
 Released under the GNU General Public License, version 2 or later.
 EOF
 }
