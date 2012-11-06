@@ -207,7 +207,7 @@ sub subnets {
 
   printline ("Netmask",   $mask2, $mask2, $mask1, 1);
   printline ("Wildcard", ~$mask2, $mask2, $mask1);
-  print "\n";
+  print "\n" . set_color($normal_color);
 
   for ($subnet = 0; $subnet < (1 << ($bitcountmask2 - $bitcountmask1)); $subnet++) {
     my $net = $network | ($subnet << (32 - $bitcountmask2));
@@ -292,7 +292,10 @@ sub printnet {
   print "Hosts/Net: " ;
   print set_color($quads_color);
   printf "%-21s", $hostn;
-  print get_description($network, $mask1);
+  if ($opt_print_bits) {
+    print get_description($network, $mask1);
+  }
+  print set_color($normal_color);
   text("\n");
 
   return $hostn;
@@ -306,8 +309,7 @@ sub get_description {
 
   # class
   if ($opt_color) {
-    $field  = set_color($normal_color) . "= " . set_color($class_color) . "Class " . getclass($network) . set_color($normal_color);
-    push @description, $field
+    push @description, set_color($normal_color) . "= " . set_color($class_color) . "Class " . getclass($network) . set_color($normal_color);
   } else {
     push @description, "= Class " . getclass($network);
   }
