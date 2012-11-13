@@ -5,7 +5,12 @@ IP-Kalkylatorn (ipkalk)
 
 Description
 -----------
-This program takes an IP address and netmask and calculates the resulting
+This script is a fork of ipcalc. It's basically the same program but with a
+lot of small improvements to the output (and a huge amount of cleaning under
+the hood). I don't do Perl but this utility is so handy i just couldn't ignore
+it.
+
+The program takes an IP address and netmask and calculates the resulting
 network address, wildcard mask, broadcast address and host range. By
 specifying a second netmask you can design subnets and supernetworks.
 
@@ -18,6 +23,13 @@ It's really easy to use ipkalk. Run the script for example usage.
 Dependencies
 ------------
 You need to have **Perl** installed to run this.
+
+Help out
+--------
+The basic functionality is all there but there is a lot of small issues with
+the script so if you know Perl and want to help out please take a look at the
+TODO file (or just check the source file for errors). If you don't mind
+reinventing the wheel then a complete rewrite might be in order.
 
 License
 -------
