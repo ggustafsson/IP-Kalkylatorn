@@ -5,10 +5,10 @@ IP-Kalkylatorn (ipkalk)
 
 Description
 -----------
-This script is a fork of ipcalc. It's basically the same program but with a
-lot of small improvements to the output (and a huge amount of cleaning under
-the hood). I don't do Perl but this utility is so handy i just couldn't ignore
-it.
+This script is a fork of ipcalc (0.41). It's basically the same program but
+with a lot of small improvements to the output (and a huge amount of cleaning
+under the hood). I don't do Perl but this utility is so handy i just couldn't
+ignore it.
 
 The program takes an IP address and netmask and calculates the resulting
 network address, wildcard mask, broadcast address and host range. By
@@ -33,7 +33,7 @@ reinventing the wheel then a complete rewrite might be in order.
 
 License
 -------
-Based on ipcalc created by Krischan Jodies <krischan@jodies.de>.
+Based on ipcalc (0.41) created by Krischan Jodies <krischan@jodies.de>.
 Forked and modified by Göran Gustafsson <gustafsson.g@gmail.com>.
 
 Released under the GNU General Public License, version 2 or later.

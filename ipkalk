@@ -2,7 +2,7 @@
 
 # IP-Kalkylatorn (ipkalk)
 #
-# Based on ipcalc created by Krischan Jodies <krischan@jodies.de>.
+# Based on ipcalc (0.41) created by Krischan Jodies <krischan@jodies.de>.
 # Forked and modified by Göran Gustafsson <gustafsson.g@gmail.com>.
 
 # Copyright (C) 2004  Krischan Jodies
@@ -24,7 +24,7 @@
 
 use strict;
 
-my $version  = "0.41";
+my $version  = "0.1";
 my $filename = "ipkalk";
 
 my @class = qw (0 8 16 24 4 5 5);
