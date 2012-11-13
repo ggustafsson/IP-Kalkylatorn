@@ -121,7 +121,7 @@ sub main {
       print "$error\n";
     }
 
-    print "deaggregate " . ntoa($address) . " - " . ntoa($address2) . "\n";
+    print "Deaggregate " . ntoa($address) . " - " . ntoa($address2) . "\n";
     deaggregate($address, $address2);
 
     exit;
@@ -136,7 +136,7 @@ sub main {
   }
 
   if ($mask1 == -1) {
-    $error .= "INVALID MASK1:   $ARGV[1]\n";
+    $error .= "INVALID MASK1: $ARGV[1]\n";
     $mask1  = argton(24);
   }
 
@@ -147,7 +147,7 @@ sub main {
   }
 
   if ($mask2 == -1) {
-    $error .= "INVALID MASK2:   $ARGV[2]\n";
+    $error .= "INVALID MASK2: $ARGV[2]\n";
     $mask2  = argton(24);
   }
 
@@ -621,7 +621,7 @@ sub getopts {
         }
 
         if ($#opt_split_sizes < 0) {
-          $error .= "Argument for " . $prefix . $opt . " is missing or invalid \n";
+          $error .= "Argument for " . $prefix . $opt . " is missing or invalid.\n";
         }
       } else {
         $error .= "Unknown option: " . $prefix . $opt . "\n";
