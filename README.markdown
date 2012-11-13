@@ -38,6 +38,7 @@ Forked and modified by Göran Gustafsson <gustafsson.g@gmail.com>.
 
 Released under the GNU General Public License, version 2 or later.
 
+    Copyright (C) 2004  Krischan Jodies
     Copyright (C) 2012  Göran Gustafsson
 
     This program is free software; you can redistribute it and/or modify it
