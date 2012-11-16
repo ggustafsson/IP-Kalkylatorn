@@ -7,8 +7,7 @@ Description
 -----------
 This script is a fork of ipcalc (0.41). It's basically the same program but
 with a lot of small improvements to the output (and a huge amount of cleaning
-under the hood). I don't do Perl but this utility is so handy i just couldn't
-ignore it.
+under the hood).
 
 The program takes an IP address and netmask and calculates the resulting
 network address, wildcard mask, broadcast address and host range. By
@@ -30,6 +29,8 @@ The basic functionality is all there but there is a lot of small issues with
 the script so if you know Perl and want to help out please take a look at the
 TODO file (or just check the source file for errors). If you don't mind
 reinventing the wheel then a complete rewrite might be in order.
+
+I don't plan on doing much more work with this script since i don't know Perl.
 
 License
 -------
