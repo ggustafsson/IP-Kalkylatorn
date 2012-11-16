@@ -34,8 +34,8 @@ I don't plan on doing much more work with this script since i don't know Perl.
 
 License
 -------
-Based on ipcalc (0.41) created by Krischan Jodies <krischan@jodies.de>.
-Forked and modified by Göran Gustafsson <gustafsson.g@gmail.com>.
+Based on ipcalc (0.41) created by Krischan Jodies (krischan at jodies.de).
+Forked and modified by Göran Gustafsson (gustafsson.g at gmail.com).
 
 Released under the GNU General Public License, version 2 or later.
 

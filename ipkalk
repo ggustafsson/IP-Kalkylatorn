@@ -1,9 +1,11 @@
 #!/usr/bin/perl -w
 
-# IP-Kalkylatorn (ipkalk)
-#
-# Based on ipcalc (0.41) created by Krischan Jodies <krischan@jodies.de>.
-# Forked and modified by Göran Gustafsson <gustafsson.g@gmail.com>.
+##############################################################################
+# IP-Kalkylatorn (ipkalk)                                                    #
+#                                                                            #
+# Based on ipcalc (0.41) created by Krischan Jodies <krischan@jodies.de>.    #
+# Forked and modified by Göran Gustafsson <gustafsson.g@gmail.com>.          #
+##############################################################################
 
 # Copyright (C) 2004  Krischan Jodies
 # Copyright (C) 2012  Göran Gustafsson
@@ -21,6 +23,11 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 # Place, Suite 330, Boston, MA 02111-1307 USA
+
+##############################################################################
+# Web: https://github.com/ggustafsson/IP-Kalkylatorn                         #
+# Git: git://github.com/ggustafsson/IP-Kalkylatorn.git                       #
+##############################################################################
 
 use strict;
 
