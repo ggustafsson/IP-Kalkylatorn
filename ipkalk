@@ -26,7 +26,7 @@
 
 ##############################################################################
 # Web: https://github.com/ggustafsson/IP-Kalkylatorn                         #
-# Git: git://github.com/ggustafsson/IP-Kalkylatorn.git                       #
+# Git: https://github.com/ggustafsson/IP-Kalkylatorn.git                     #
 ##############################################################################
 
 use strict;
@@ -848,7 +848,7 @@ sub version {
 $filename $version
 
 Web: https://github.com/ggustafsson/IP-Kalkylatorn
-Git: git://github.com/ggustafsson/IP-Kalkylatorn.git
+Git: https://github.com/ggustafsson/IP-Kalkylatorn.git
 
 Based on ipcalc created by Krischan Jodies <krischan\@jodies.de>.
 Forked and modified by Göran Gustafsson <gustafsson.g\@gmail.com>.
