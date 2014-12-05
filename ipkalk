@@ -1,33 +1,33 @@
 #!/usr/bin/perl -w
 
-##############################################################################
-# IP-Kalkylatorn (ipkalk)                                                    #
-#                                                                            #
-# Based on ipcalc (0.41) created by Krischan Jodies <krischan@jodies.de>.    #
-# Forked and modified by Göran Gustafsson <gustafsson.g@gmail.com>.          #
-##############################################################################
+###############################################################################
+# IP-Kalkylatorn (ipkalk)                                                     #
+#                                                                             #
+# Based on ipcalc (0.41) created by Krischan Jodies <krischan@jodies.de>.     #
+# Forked and modified by Göran Gustafsson <gustafsson.g@gmail.com>.           #
+###############################################################################
 
 # Copyright (C) 2004  Krischan Jodies
 # Copyright (C) 2012  Göran Gustafsson
 #
-# This program is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by the Free
-# Software Foundation; either version 2 of the License, or (at your option)
-# any later version.
+# This program is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 2 of the License, or (at your option) any later
+# version.
 #
 # This program is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
-# more details.
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
 #
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 # Place, Suite 330, Boston, MA 02111-1307 USA
 
-##############################################################################
-# Web: https://github.com/ggustafsson/IP-Kalkylatorn                         #
-# Git: https://github.com/ggustafsson/IP-Kalkylatorn.git                     #
-##############################################################################
+###############################################################################
+# Web: https://github.com/ggustafsson/IP-Kalkylatorn                          #
+# Git: https://github.com/ggustafsson/IP-Kalkylatorn.git                      #
+###############################################################################
 
 use strict;
 
@@ -707,8 +707,7 @@ sub bitcountmaskton {
 
 sub argton {
   # expects 1. an address as dotted decimals, bit-count-mask, or hex
-  #         2. netmask flag. if set -> check netmask and negate wildcard
-  #            masks
+  #         2. netmask flag. if set -> check netmask and negate wildcard masks
   # returns integer or -1 if invalid
 
   my $arg          = shift;
@@ -817,8 +816,8 @@ sub help {
 Usage: $filename [OPTION(S)]... [ADDRESS[/BITS]]... [NETMASK]...
 
 This program takes an IP address and netmask and calculates the resulting
-network address, wildcard mask, broadcast address and host range. By
-specifying a second netmask you can design subnets and supernetworks.
+network address, wildcard mask, broadcast address and host range. By specifying
+a second netmask you can design subnets and supernetworks.
 
   -s, --split <size1> <size2> ...
                   Split address into subnets of specified sizes.
