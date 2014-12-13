@@ -1,7 +1,7 @@
 IP-Kalkylatorn (ipkalk)
 =======================
 
-![ipkalk](https://github.com/ggustafsson/IP-Kalkylatorn/raw/master/Preview.png)
+![Preview](https://github.com/ggustafsson/IP-Kalkylatorn/raw/master/Preview.png)
 
 Description
 -----------
