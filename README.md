@@ -1,5 +1,5 @@
-IP-Kalkylatorn (ipkalk)
-=======================
+IP-Kalkylatorn (ipkalk) (Abandoned)
+===================================
 
 ![Preview](https://github.com/ggustafsson/IP-Kalkylatorn/raw/master/Preview.png)
 
